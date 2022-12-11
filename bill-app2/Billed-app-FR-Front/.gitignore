@@ -1,3 +1,6 @@
 node_modules
 coverage
 .idea
+# ignore all demo file
+/__tests__/demo.test.js
+/__tests__/demo2.test.js

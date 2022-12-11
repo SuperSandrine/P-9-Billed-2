@@ -17,14 +17,14 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
-    const inputfile = this.document.querySelector(`input[data-testid="file"]`)
+    const inputfile = this.document.querySelector(`input[data-testid="file"]`) //input
     const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    console.log("file", file);//input
-    console.log("file ssans files[0]", this.document.querySelector(`input[data-testid="file"]`));//fichier dans l'input
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0] //le fichier
+//    console.log("file", inputfile);//input
+//    console.log("file ssans files[0]", this.document.querySelector(`input[data-testid="file"]`));//fichier dans l'input
 
     const filePath = e.target.value.split(/\\/g)
-    console.log("filepath", filePath);
+    //console.log("filepath", filePath);
     // DEBUG: pour contrôler l'extension: avec la méthode de la const filePatth
     // on récupère le dernier item du tableau (const fileExtension)
     // et on vérifie que c'est bien les formats acceptés (const controlPictureExtension(fileExtension))
@@ -37,11 +37,11 @@ export default class NewBill {
     // const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
     const fileExtension = fileType.split(/\//g)[1];
     //const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
-    console.log("fileext", fileExtension);
-    console.log("e", e);
+    //console.log("fileext", fileExtension);
+    //console.log("e", e);
 
-    console.log("file", e.target);
-    console.log("file value", e.target.value);
+    //console.log("file", e.target);
+    //console.log("file value", e.target.value); // undefined dans test
 
 
 
@@ -61,7 +61,9 @@ export default class NewBill {
     //console.log("formData2", formData);
     
     if (isGoodExtension){
-      inputfile.classList.remove("red-border");      inputfile.removeAttribute("aria-invalid")
+      inputfile.classList.remove("red-border");       
+      inputfile.removeAttribute("aria-invalid", true)
+      inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
       this.store
@@ -83,15 +85,18 @@ export default class NewBill {
       //console.log("mauvais type de fichier, qui es-tu file?",inputfile)
       inputfile.classList.remove("blue-border")
       inputfile.classList.add("red-border")
+      inputfile.removeAttribute("aria-invalid", false)
       inputfile.setAttribute("aria-invalid",true)
       inputFileErrorMsg.style.visibility = "visible"      
   }}
   handleSubmit = e => {
-    const inputfile = this.document.querySelector(`input[data-testid="file"]`)
-    console.log("linput",inputfile)
-    const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
     e.preventDefault()
-    if(inputfile.classList.contains("red-border")){
+    const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
+    
+    const inputfile = document.querySelector(`input[data-testid="file"]`)
+    //console.log("linput",inputfile)
+//    if(inputfile.classList.contains("red-border")){
+    if(!inputfile.checkValidity()){
       inputFileErrorMsg.style.fontSize = "large"
       inputFileErrorMsg.style.fontWeight = "900"      
     }else{

@@ -15,7 +15,8 @@ export default () => {
                 <div class="col-md-6">
                   <div class="col-half">
                     <label for="expense-type" class="bold-label">Type de dépense</label>
-                      <select required class="form-control blue-border" data-testid="expense-type">
+                      <select required class="form-control blue-border" data-testid="expense-type"
+                      name="expenseType">
                         <option>Transports</option>
                         <option>Restaurants et bars</option>
                         <option>Hôtel et logement</option>
@@ -31,11 +32,11 @@ export default () => {
                   </div>
                   <div class="col-half">
                     <label for="datepicker" class="bold-label">Date</label>
-                    <input required type="date" class="form-control blue-border" data-testid="datepicker" />
+                    <input required type="date" class="form-control blue-border" data-testid="datepicker" name="datepicker" />
                   </div>
                   <div class="col-half">
                     <label for="amount" class="bold-label">Montant TTC </label>
-                    <input required type="number" class="form-control blue-border input-icon input-icon-right" data-testid="amount" placeholder="348"/>
+                    <input required type="number" class="form-control blue-border input-icon input-icon-right" data-testid="amount" name="amount" placeholder="348"/>
                   </div>
                   <div class="col-half-row">
                     <div class="flex-col"> 
@@ -44,7 +45,8 @@ export default () => {
                     </div>
                     <div class="flex-col">
                       <label for="pct" class="white-text">%</label>
-                      <input required type="number" class="form-control blue-border" data-testid="pct" placeholder="20" />
+                      <input required type="number" class="form-control blue-border" data-testid="pct"
+                      name="pct" placeholder="20" />
                     </div>
                   </div>
                 </div>
@@ -55,10 +57,10 @@ export default () => {
                   </div>
                   <div class="col-half">
                     <label for="file" class="bold-label">Justificatif</label>
-                    <input required type="file" class="form-control blue-border" data-testid="file" 
-                    aria-errormessage="msgID"
+                    <input required type="file" class="form-control blue-border" data-testid="file" name="file"
+                    
                     />
-                    <span id="msgID" class="error-msg">Vérifiez l'extension: jpg, jpeg ou png sont acceptés</span>
+                    <span class="error-msg">Vérifiez l'extension: jpg, jpeg ou png sont acceptés</span>
                   </div>
                 </div>
             </div>
