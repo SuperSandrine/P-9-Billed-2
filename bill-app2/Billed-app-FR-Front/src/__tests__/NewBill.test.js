@@ -69,8 +69,6 @@ afterEach(() => {
 
 describe("Given I am connected as an employee",()=>{
  describe("When I am on the NewBill Page", ()=>{
-
-
   test("Then, the newBill icon should be heighlighted (in the left vertical bar)", ()=> {
     const newBillIcon = screen.getByTestId("icon-mail");
     expect(newBillIcon).toHaveClass("active-icon")
@@ -126,8 +124,9 @@ describe("Given I am connected as an employee",()=>{
 
       fileInput.addEventListener("change",testHandleChangeFile)
       userEvent.upload(fileInput, fileText)
+      console.log("fileInput", fileInput.files[0].name)
 
-      expect(fileInput).toHaveErrorMessage("Vérifiez l'extension: jpg, jpeg ou png sont acceptés")
+      expect(fileInput).toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
       expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
 
       // const fileJpg = new File(["img"], "blabla.jpg", {
@@ -138,9 +137,10 @@ describe("Given I am connected as an employee",()=>{
 
     })
   })
+})
 
-  describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
-    test("Then I should be sent on the Bills Page", () => {
+describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
+    test("Then I should be sent on the Bills Page", async () => {
       const onNavigate = pathname => {
         document.body.innerHTML = ROUTES({ pathname });
       };
@@ -179,7 +179,7 @@ describe("Given I am connected as an employee",()=>{
       userEvent.type(datePickerInput, "2022-02-22")
       userEvent.type(amountInput,"222")
       userEvent.type(pctInput,"20")
-      userEvent.upload(fileInput, file)
+      await userEvent.upload(fileInput, file)
 
       expect(file.name).toBe("blabla.jpg")
 
@@ -224,14 +224,12 @@ describe("Given I am connected as an employee",()=>{
       expect(handleSubmit).toHaveBeenCalledTimes(1)
       
       /////////////
-      //expect(screen.getByText('Mes notes de frais')).toBeTruthy();
+      expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
       
     })
   })
 })
 
-
-})
 
 
 

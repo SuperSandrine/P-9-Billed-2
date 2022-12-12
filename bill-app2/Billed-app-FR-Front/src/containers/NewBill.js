@@ -56,8 +56,7 @@ export default class NewBill {
     const formData = new FormData()
     //console.log("formData", formData);
     const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+    
     //console.log("formData2", formData);
     
     if (isGoodExtension){
@@ -66,6 +65,8 @@ export default class NewBill {
       inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
+      formData.append('file', file)
+    formData.append('email', email)
       this.store
         .bills()
         .create({
@@ -96,7 +97,8 @@ export default class NewBill {
     const inputfile = document.querySelector(`input[data-testid="file"]`)
     //console.log("linput",inputfile)
 //    if(inputfile.classList.contains("red-border")){
-    if(!inputfile.checkValidity()){
+  console.log("alors?", inputfile.checkValidity())
+    if(inputfile.checkValidity()){
       inputFileErrorMsg.style.fontSize = "large"
       inputFileErrorMsg.style.fontWeight = "900"      
     }else{
