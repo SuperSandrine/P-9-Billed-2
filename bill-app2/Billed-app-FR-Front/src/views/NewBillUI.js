@@ -58,9 +58,10 @@ export default () => {
                   <div class="col-half">
                     <label for="file" class="bold-label">Justificatif</label>
                     <input required type="file" class="form-control blue-border" data-testid="file" name="file"
+                    aria-errormessage="msgID" 
                     
                     />
-                    <span class="error-msg">Vérifiez l'extension: jpg, jpeg ou png sont acceptés</span>
+                    <span id="msgID" class="error-msg">Vérifiez l'extension: jpg, jpeg ou png sont acceptés</span>
                   </div>
                 </div>
             </div>

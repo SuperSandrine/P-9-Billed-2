@@ -110,7 +110,7 @@ describe("Given I am connected as an employee",()=>{
       const newBill = new NewBill({
         document,
         onNavigate,
-        store: null,
+        store: mockStore,
         localStorage: window.localStorage,
       });
 
@@ -124,114 +124,146 @@ describe("Given I am connected as an employee",()=>{
 
       fileInput.addEventListener("change",testHandleChangeFile)
       userEvent.upload(fileInput, fileText)
-      console.log("fileInput", fileInput.files[0].name)
+      //console.log("fileInput", fileInput.files[0].name) // le fichier text est bien chargé
 
-      expect(fileInput).toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
       expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
+      expect(fileInput).toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
 
-      // const fileJpg = new File(["img"], "blabla.jpg", {
-      //   type: ["image/jpg"],
-      // });
-      // userEvent.upload(fileInput, fileJpg)
-      // expect(fileInput).not.toHaveErrorMessage("Vérifiez l'extension: jpg, jpeg ou png sont acceptés")
-
-    })
-  })
-})
-
-describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
-    test("Then I should be sent on the Bills Page", async () => {
-      const onNavigate = pathname => {
-        document.body.innerHTML = ROUTES({ pathname });
-      };
-      const newBill = new NewBill({
-        document,
-        onNavigate,
-        store: mockStore,
-        localStorage: window.localStorage,
-      });
-
-
-//       const testBill = {
-//         type: "Transports",
-// //        fileName: "facture.jpg",
-//         date: "2022-02-22",
-//         amount: 222,
-//         pct: 20,
-//       };
-
-      // La capture des Inputs
-      const expenseTypeInput = screen.getByTestId('expense-type')
-      const datePickerInput =  screen.getByTestId('datepicker')
-      const amountInput = screen.getByTestId("amount")
-      const pctInput = screen.getByTestId("pct")
-      const fileInput = screen.getByTestId("file");
-
-      const handleSubmit = jest.fn((e)=>{
-        newBill.handleSubmit(e)})
-
-      const file = new File(["img"], "blabla.jpg", {
-          type: ["image/jpg"],
-      });
-
-      // User remplit les champs required de form
-      userEvent.selectOptions(screen.getByRole('combobox'),["Transports"])
-      userEvent.type(datePickerInput, "2022-02-22")
-      userEvent.type(amountInput,"222")
-      userEvent.type(pctInput,"20")
-      await userEvent.upload(fileInput, file)
-
-      expect(file.name).toBe("blabla.jpg")
-
-      expect(screen.getByRole('option', { name : 'Transports'}).selected).toBe(true)
-      expect(fileInput.files[0]).toStrictEqual(file)
-      
-      const form= screen.getByTestId("form-new-bill")
-
-      
-      expect(form).toHaveFormValues({
-        expenseType:'Transports',
-        datepicker:'2022-02-22',
-        amount:222,
-        pct:20
       })
-
-      expect(amountInput).toBeValid()
-      expect(expenseTypeInput).toBeValid()
-      expect(datePickerInput).toBeValid()
-      expect(pctInput).toBeValid()
-      //expect(fileInput).toBeValid()// Received element is not currently valid:
-      expect(file.name).toBe("blabla.jpg")
-      //<input aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
-      // il a l'aria invalid, ça veut dire qu'il ne passe pas le check-validity?
-      
-
-
-
-      // ça marche pas avec le .tohaveformvalue précedent
-      // console.log("c'est quoi file  ?", file)
-      // console.log("c'est quoi amountInput  ?", amountInput.name)
-      // console.log("c'est quoi amount value ?", amountInput.
-      // value)
-      // console.log("c'est quoi amount name ?", amountInput.name)
-
-      const submitButton = screen.getByRole("button", { name: /envoyer/i });
-      expect(submitButton.type).toBe("submit");
-
-      form.addEventListener("submit",handleSubmit)
-      userEvent.click(submitButton)
-      //fireEvent.submit(form)
-      expect(handleSubmit).toHaveBeenCalledTimes(1)
-      
-      /////////////
-      expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
-      
+    })
+    describe("When I upload a file with a right extension",()=>{
+      test("Then it should not have an error message", ()=>{
+        const onNavigate = pathname => {
+          document.body.innerHTML = ROUTES({ pathname });
+        };
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: mockStore,
+          localStorage: window.localStorage,
+        });
+  
+        const fileInput = screen.getByTestId("file");
+        const testHandleChangeFile= jest.fn((e) =>
+          newBill.handleChangeFile(e));
+   
+        const fileJpg = new File(["img"], "Piqueture.jpg", {
+          type: "image/jpg",
+        });
+  
+        fileInput.addEventListener("change",testHandleChangeFile)
+        userEvent.upload(fileInput, fileJpg)
+  
+        expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
+        expect(fileInput).not.toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
+      })
     })
   })
 })
 
 
 
+// POST : 
+describe("Given I am connected as an employee 2",()=>{
+  describe("When I am on the Newbill Page",()=>{
+    describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
+      test("Then I should be sent on the Bills Page", async () => {
+        const onNavigate = pathname => {
+          document.body.innerHTML = ROUTES({ pathname });
+        };
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: mockStore,
+          localStorage: window.localStorage,
+        });
+  
+  //       const testBill = {
+  //         type: "Transports",
+  // //        fileName: "facture.jpg",
+  //         date: "2022-02-22",
+  //         amount: 222,
+  //         pct: 20,
+  //       };
+  
+        // La capture des Inputs
+        const expenseTypeInput = screen.getByTestId('expense-type')
+        const datePickerInput =  screen.getByTestId('datepicker')
+        const amountInput = screen.getByTestId("amount")
+        const pctInput = screen.getByTestId("pct")
+        const fileInput = screen.getByTestId("file");
+        
+        // le mock de la fonction submit
+        const handleSubmit = jest.fn((e)=>{
+          newBill.handleSubmit(e)})
+          
+        // le fichier file valable
+        const file = new File(["img"], "blabla.jpg", {
+            type: ["image/jpg"],
+        });
+  
+        // User remplit les champs required de form
+        userEvent.selectOptions(screen.getByRole('combobox'),["Transports"])
+        userEvent.type(datePickerInput, "2022-02-22")
+        userEvent.type(amountInput,"222")
+        userEvent.type(pctInput,"20")
+
+        userEvent.upload(fileInput, file)
+  
+        expect(file.name).toBe("blabla.jpg")
+        expect(fileInput.files[0].name).toBe("blabla.jpg")
+        expect(screen.getByRole('option', { name : 'Transports'}).selected).toBe(true)
+        expect(fileInput.files[0]).toStrictEqual(file)
+        // ^^^ça passe jusque là
+        
+        const form= screen.getByTestId("form-new-bill")
+        
+        // le form a des valeurs valides:
+        expect(form).toHaveFormValues({
+          expenseType:'Transports',
+          datepicker:'2022-02-22',
+          amount:222,
+          pct:20,
+        })        
+        expect(amountInput).toBeValid()
+        expect(expenseTypeInput).toBeValid()
+        expect(datePickerInput).toBeValid()
+        expect(pctInput).toBeValid()
+        //expect(fileInput).toBeValid()// Received element is not currently valid:
+        expect(file.name).toBe("blabla.jpg")
+        expect(file.type).toBe("image/jpg")
+
+
+        //<input aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
+        // il a l'aria invalid, ça veut dire qu'il ne passe pas le check-validity?
+  
+        const submitButton = screen.getByRole("button", { name: /envoyer/i });
+        expect(submitButton.type).toBe("submit");
+        //////////// ça marche jusqu'ici
+  
+        form.addEventListener("submit",handleSubmit)
+        //userEvent.click(submitButton)
+        //fireEvent.submit(form)
+        await waitFor(()=>{
+          fireEvent.submit(form)
+          expect(handleSubmit).toHaveBeenCalledTimes(1)
+
+          expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
+        })
+        
+        /////////////
+        //expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
+        
+      })
+    })
+  })
+})
+
+
+//______________________________________ brouillon
+//________________________________________________
+//________________________________________________
+//________________________________________________
 
 
 
