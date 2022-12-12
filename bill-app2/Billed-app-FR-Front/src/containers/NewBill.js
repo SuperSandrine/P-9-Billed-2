@@ -53,11 +53,11 @@ export default class NewBill {
     // console.log("alors ce format est", isGoodExtension);
     const fileName = filePath[filePath.length-1]
     //console.log("fileName", fileName);
-    const formData = new FormData()
+    //const formData = new FormData()
     //console.log("formData", formData);
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+    //const email = JSON.parse(localStorage.getItem("user")).email
+    //formData.append('file', file)
+    //formData.append('email', email)
     //console.log("formData2", formData);
     
     if (isGoodExtension){
@@ -66,8 +66,11 @@ export default class NewBill {
       inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
-      //formData.append('file', file)
-      //formData.append('email', email)
+
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
       this.store
         .bills()
         .create({
@@ -84,24 +87,31 @@ export default class NewBill {
         })
         .catch(error => console.error(error))
     }else if(!isGoodExtension){
-      //console.log("mauvais type de fichier, qui es-tu file?",inputfile)
+      console.log("mauvais type de fichier, qui es-tu file?",inputfile)
+      console.log("inputfile value",inputfile.value);
       inputfile.classList.remove("blue-border")
       inputfile.classList.add("red-border")
       inputfile.removeAttribute("aria-invalid", false)
       inputfile.setAttribute("aria-invalid",true)
-      inputFileErrorMsg.style.visibility = "visible"      
+      inputFileErrorMsg.style.visibility = "visible"
+      inputfile.value=""
+      inputfile.setCustomValidity("Le fichier doit être en jpg, jpeg, png");
+           
   }}
   handleSubmit = e => {
     e.preventDefault()
-    const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
-    const inputfile = document.querySelector(`input[data-testid="file"]`)
+    // nicolas, est-ce qu'il faut que je vire la conditionnelle de handleSubmit?
+    // et que je fasse ce travail dans la isGoodExtension?
+    // //const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
+    // //const inputfile = document.querySelector(`input[data-testid="file"]`)
     //console.log("linput",inputfile)
-    if(inputfile.hasAttribute("red-border")){
-    //if(inputfile.classList.contains("red-border")){
+    //if(inputfile.hasAttribute("red-border")){
+    // //if(inputfile.classList.contains("red-border")){
     //if(inputfile.hasAttribute("aria-invalid",true)){
-      inputFileErrorMsg.style.fontSize = "large"
-      inputFileErrorMsg.style.fontWeight = "900"      
-    }else{
+      ////inputFileErrorMsg.style.fontSize = "large"
+      ////inputFileErrorMsg.style.fontWeight = "900"
+      ////return      
+    //}else{
       //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
       const email = JSON.parse(localStorage.getItem("user")).email
       const bill = {
@@ -117,12 +127,12 @@ export default class NewBill {
         fileName: this.fileName,
         status: 'pending'
       }
+      console.log("bill avec new data", bill)
       this.updateBill(bill)
       this.onNavigate(ROUTES_PATH['Bills'])
-  }}
+  }
 
   // not need to cover this function by tests
-  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store

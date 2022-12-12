@@ -102,7 +102,7 @@ describe("Given I am connected as an employee",()=>{
     expect(commentaryInput).not.toBeRequired()
 
   })
-  describe("When I upload a file with a wrong extension",()=>{
+  describe("When I uploaded a file with a wrong extension",()=>{
     test("Then it should have an error message", ()=>{
       const onNavigate = pathname => {
         document.body.innerHTML = ROUTES({ pathname });
@@ -128,10 +128,58 @@ describe("Given I am connected as an employee",()=>{
 
       expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
       expect(fileInput).toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
-
-      })
     })
-    describe("When I upload a file with a right extension",()=>{
+      // réécriture de la fonction submit, plus besoin de ce test
+      // describe("When I uploaded a file with a wrong extension and I submitted",()=>{
+      //   test("it should enlarge the error message",()=>{
+      //     const onNavigate = pathname => {
+      //       document.body.innerHTML = ROUTES({ pathname });
+      //     };
+      //     const newBill = new NewBill({
+      //       document,
+      //       onNavigate,
+      //       store: mockStore,
+      //       localStorage: window.localStorage,
+      //     });
+
+      //     const testHandleSubmit= jest.fn((e) => 
+      //       newBill.handleSubmit(e));
+      //     const testHandleChangeFile= jest.fn((e) =>
+      //       newBill.handleChangeFile(e));
+    
+      //     const fileInput = screen.getByTestId("file");
+
+      //     const fileText = new File(["foo"], "foo.txt", {
+      //       type: "text/plain",
+      //     });
+    
+      //     fileInput.addEventListener("change",testHandleChangeFile)
+      //     userEvent.upload(fileInput, fileText)
+      //     //console.log("fileInput", fileInput.files[0].name) // le fichier text est bien chargé
+    
+      //     expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
+      //     expect(fileInput).toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
+          
+      //     const errorMessage = screen.getByText(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
+
+      //     const submitButton = screen.getByRole("button", { name: /envoyer/i });
+      //     expect(submitButton.type).toBe("submit");
+
+      //   //form.addEventListener("submit",handleSubmit)
+      //   //fireEvent.submit(form)
+        
+      //   submitButton.addEventListener("click", testHandleSubmit)
+      //   userEvent.click(submitButton)
+        
+      //   expect(testHandleSubmit).toHaveBeenCalledTimes(1)
+      //   expect(errorMessage).toHaveStyle({fontSize: 'large', fontWeight: 900,})
+
+      //   // <span id="msgID" class="error-msg" style="visibility: visible; font-size: large; font-weight: 900;">Vérifiez l'extension: jpg, jpeg ou png sont acceptés</span>
+
+      //   })
+      // })      
+    })
+    describe("When I uploaded a file with a right extension",()=>{
       test("Then it should not have an error message", ()=>{
         const onNavigate = pathname => {
           document.body.innerHTML = ROUTES({ pathname });
@@ -158,16 +206,14 @@ describe("Given I am connected as an employee",()=>{
         expect(fileInput).not.toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
       })
     })
-  })
-})
+    // _________________________
+    // _________________________
+    // problème Nicola :  TypeError: Cannot read property 'value' of null
+    // _________________________
+    // _________________________
 
-
-
-// POST : 
-describe("Given I am connected as an employee 2",()=>{
-  describe("When I am on the Newbill Page",()=>{
-    describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
-      test("Then I should be sent on the Bills Page", async () => {
+    describe("When I click on submitted with an empty form",()=>{
+      test("Then it should stay on the newBill page", ()=>{
         const onNavigate = pathname => {
           document.body.innerHTML = ROUTES({ pathname });
         };
@@ -177,14 +223,63 @@ describe("Given I am connected as an employee 2",()=>{
           store: mockStore,
           localStorage: window.localStorage,
         });
-  
-  //       const testBill = {
-  //         type: "Transports",
-  // //        fileName: "facture.jpg",
-  //         date: "2022-02-22",
-  //         amount: 222,
-  //         pct: 20,
-  //       };
+
+        const handleSubmit = jest.fn((e)=>{
+          newBill.handleSubmit(e)})
+        const handleChangeFile = jest.fn((e)=>{
+          newBill.handleChangeFile(e)})
+        
+        const expenseType = screen.getByTestId("expense-type")
+        expect(expenseType.value).toBe("Transports") //valeur par défaut
+        const datePicker = screen.getByTestId("datepicker")
+        expect(datePicker.value).toBe("")
+        const amount = screen.getByTestId("amount")
+        expect(amount.value).toBe("")
+        const pct = screen.getByTestId("pct")
+        expect(pct.value).toBe("")
+        const fileInput = screen.getByTestId("file")
+        expect(fileInput.files[0]).toBe(undefined)
+
+        const form= screen.getByTestId("form-new-bill")
+        //const submitButton = screen.getByRole("button", { name: /envoyer/i });
+        //expect(submitButton.type).toBe("submit");
+
+
+        form.addEventListener("submit",handleSubmit)
+        fireEvent.submit(form)
+        //probleme avec le click
+        //submitButton.addEventListener("click", handleSubmit)
+        //userEvent.click(submitButton)
+        
+        expect(handleSubmit).toHaveBeenCalledTimes(1)
+
+        ////////// expect ne marche pas, donne l'impression d'être passé sur la page bills
+        expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
+        ///  TestingLibraryElementError: Unable to find an element with the text: Envoyer une note de frais. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+        // NICOLAS: il y a une différence d'erreur quand je fais un fireEvent.submit ou UserEvent.click
+      })
+    })
+  })
+})
+
+
+
+// POST : 
+describe("Given I am connected as an employee 2",()=>{
+  describe("When I am on the Newbill Page",()=>{
+    describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
+      test("Then I should be sent on the Bills Page",  () => {
+        const onNavigate = pathname => {
+          document.body.innerHTML = ROUTES({ pathname });
+        };
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: mockStore,
+          localStorage: window.localStorage,
+        });
+        
   
         // La capture des Inputs
         const expenseTypeInput = screen.getByTestId('expense-type')
@@ -196,7 +291,10 @@ describe("Given I am connected as an employee 2",()=>{
         // le mock de la fonction submit
         const handleSubmit = jest.fn((e)=>{
           newBill.handleSubmit(e)})
-          
+        const updateBill = jest.fn(newBill.updateBill)
+        // NICOLAS: est-ce qu'on doit contrôler updateBill?
+        
+        
         // le fichier file valable
         const file = new File(["img"], "blabla.jpg", {
             type: ["image/jpg"],
@@ -237,22 +335,41 @@ describe("Given I am connected as an employee 2",()=>{
         //<input aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
         // il a l'aria invalid, ça veut dire qu'il ne passe pas le check-validity?
   
-        const submitButton = screen.getByRole("button", { name: /envoyer/i });
-        expect(submitButton.type).toBe("submit");
+        //const submitButton = screen.getByRole("button", { name: /envoyer/i });
+        //expect(submitButton.type).toBe("submit");
         //////////// ça marche jusqu'ici
+
+        // submitButton.addEventListener("click", handleSubmit)
+        // userEvent.click(submitButton)
   
-        form.addEventListener("submit",handleSubmit)
+        //form.addEventListener("submit",handleSubmit)
         //userEvent.click(submitButton)
         //fireEvent.submit(form)
-        await waitFor(()=>{
-          fireEvent.submit(form)
-          expect(handleSubmit).toHaveBeenCalledTimes(1)
+        // await waitFor(()=>{
+        //   submitButton.addEventListener("click", handleSubmit)
+        //   userEvent.click(submitButton)
+        //   expect(handleSubmit).toHaveBeenCalledTimes(2)
 
-          expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
-        })
+        // })
+        form.addEventListener("submit",handleSubmit)
+        fireEvent.submit(form)
+
+        //submitButton.addEventListener("click", handleSubmit)
+        //userEvent.click(submitButton)
         
+        expect(handleSubmit).toHaveBeenCalledTimes(1)
+        //expect(updateBill).toHaveBeenCalled()
+
         /////////////
-        //expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy();
+         expect(screen.getByText(/Mes/i)).toBeTruthy(); // semble être resté sur la page des newbills
+         ///// :  TestingLibraryElementError: Unable to find an element with the text: /Mes/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+         ///// aussi erreur: 
+         //   TypeError: Cannot read property 'value' of null
+
+      //107 |       const bill = {
+      //  108 |         email,
+      //> 109 |         type: e.target.querySelector(`select//[data-testid="expense-type"]`).value,
+      //                            ^
         
       })
     })

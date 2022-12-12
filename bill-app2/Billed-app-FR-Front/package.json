@@ -6,7 +6,7 @@
     "test": "jest --coverage --noStackTrace --silent",
     "test2": " jest --coverage --watch",
     "tbills": "node_modules/.bin/jest src/__tests__/Bills.js ",
-    "tnewbill": "node_modules/.bin/jest src/__tests__/NewBill.js "
+    "tnewbill": "node_modules/.bin/jest src/__tests__/NewBill.test.js "
   
   },
   "jest": {
