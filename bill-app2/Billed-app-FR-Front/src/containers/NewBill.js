@@ -50,7 +50,7 @@ export default class NewBill {
       } else{return false}
     }
     const isGoodExtension = controlPictureExtension(fileExtension)
-    // console.log("alors ce format est", isGoodExtension);
+     console.log("alors ce format est", isGoodExtension);
     const fileName = filePath[filePath.length-1]
     //console.log("fileName", fileName);
     //const formData = new FormData()
@@ -60,12 +60,14 @@ export default class NewBill {
     //formData.append('email', email)
     //console.log("formData2", formData);
     
-    if (isGoodExtension){
+    if (isGoodExtension==true){
       inputfile.classList.remove("red-border");       
       inputfile.removeAttribute("aria-invalid", true)
       inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
+
+      console.log("check dans le bon scénar", inputfile.checkValidity())
 
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
@@ -86,32 +88,35 @@ export default class NewBill {
           this.fileName = fileName
         })
         .catch(error => console.error(error))
-    }else if(!isGoodExtension){
-      console.log("mauvais type de fichier, qui es-tu file?",inputfile)
-      console.log("inputfile value",inputfile.value);
+    }else if(isGoodExtension == false){
+      console.log("mauvais type de fichier, qui es-tu file?",inputfile);
+      
+      //console.log("inputfile value",inputfile.value);
       inputfile.classList.remove("blue-border")
       inputfile.classList.add("red-border")
       inputfile.removeAttribute("aria-invalid", false)
       inputfile.setAttribute("aria-invalid",true)
       inputFileErrorMsg.style.visibility = "visible"
       inputfile.value=""
-      inputfile.setCustomValidity("Le fichier doit être en jpg, jpeg, png");
+      //inputfile.setCustomValidity("Le fichier doit être en jpg, jpeg, png");
+      console.log("check dans mauvais scénar", inputfile.checkValidity())
            
   }}
   handleSubmit = e => {
     e.preventDefault()
+    const form = document.querySelector(`input[data-testid="form-new-bill"]`)
     // nicolas, est-ce qu'il faut que je vire la conditionnelle de handleSubmit?
     // et que je fasse ce travail dans la isGoodExtension?
-    // //const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
-    // //const inputfile = document.querySelector(`input[data-testid="file"]`)
-    //console.log("linput",inputfile)
-    //if(inputfile.hasAttribute("red-border")){
-    // //if(inputfile.classList.contains("red-border")){
-    //if(inputfile.hasAttribute("aria-invalid",true)){
-      ////inputFileErrorMsg.style.fontSize = "large"
-      ////inputFileErrorMsg.style.fontWeight = "900"
-      ////return      
-    //}else{
+    // const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
+    const inputfile = document.querySelector(`input[data-testid="file"]`)
+    // console.log("linput",inputfile.classList.contains("red-border"))
+    // //if(inputfile.hasAttribute("red-border")){
+    // if(inputfile.classList.contains("red-border")){
+    // //if(inputfile.hasAttribute("aria-invalid",true)){
+    //   // inputFileErrorMsg.style.fontSize = "large"
+    //   // inputFileErrorMsg.style.fontWeight = "900"
+    //   return      
+    // }else if(inputfile.classList.contains("blue-border")){
       //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
       const email = JSON.parse(localStorage.getItem("user")).email
       const bill = {
@@ -128,8 +133,13 @@ export default class NewBill {
         status: 'pending'
       }
       console.log("bill avec new data", bill)
+      console.log("a inavalid?",inputfile.classList.contains("aria-invalid",true))
+      // if(inputfile.classList.contains("aria-invalid",true)){
+      // return error
+      // }else{
       this.updateBill(bill)
       this.onNavigate(ROUTES_PATH['Bills'])
+    //}
   }
 
   // not need to cover this function by tests

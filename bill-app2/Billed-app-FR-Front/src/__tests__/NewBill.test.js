@@ -204,6 +204,8 @@ describe("Given I am connected as an employee",()=>{
   
         expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
         expect(fileInput).not.toHaveErrorMessage(/Vérifiez l'extension: jpg, jpeg ou png sont acceptés/i)
+        //expect(fileInput.files[0]).toBeValid()
+        // NICOLAS: ça marche pas
       })
     })
     // _________________________
@@ -239,12 +241,13 @@ describe("Given I am connected as an employee",()=>{
         expect(pct.value).toBe("")
         const fileInput = screen.getByTestId("file")
         expect(fileInput.files[0]).toBe(undefined)
-
+        expect(fileInput).toBeInvalid()
+        
         const form= screen.getByTestId("form-new-bill")
         //const submitButton = screen.getByRole("button", { name: /envoyer/i });
         //expect(submitButton.type).toBe("submit");
 
-
+        expect(form.checkValidity()).toBeFalsy()
         form.addEventListener("submit",handleSubmit)
         fireEvent.submit(form)
         //probleme avec le click
@@ -263,8 +266,6 @@ describe("Given I am connected as an employee",()=>{
   })
 })
 
-
-
 // POST : 
 describe("Given I am connected as an employee 2",()=>{
   describe("When I am on the Newbill Page",()=>{
@@ -280,8 +281,8 @@ describe("Given I am connected as an employee 2",()=>{
           localStorage: window.localStorage,
         });
         
-  
         // La capture des Inputs
+        const expenseNameInput = screen.getByTestId('expense-name')
         const expenseTypeInput = screen.getByTestId('expense-type')
         const datePickerInput =  screen.getByTestId('datepicker')
         const amountInput = screen.getByTestId("amount")
@@ -289,58 +290,65 @@ describe("Given I am connected as an employee 2",()=>{
         const fileInput = screen.getByTestId("file");
         
         // le mock de la fonction submit
-        const handleSubmit = jest.fn((e)=>{
+        const testHandleSubmit = jest.fn((e)=>{
           newBill.handleSubmit(e)})
-        const updateBill = jest.fn(newBill.updateBill)
+        const testHandleChangeFile= jest.fn((e) =>
+          newBill.handleChangeFile(e));
+
+        const testupdateBill = jest.fn(newBill.updateBill)
         // NICOLAS: est-ce qu'on doit contrôler updateBill?
-        
         
         // le fichier file valable
         const file = new File(["img"], "blabla.jpg", {
             type: ["image/jpg"],
         });
+        fileInput.addEventListener("change",testHandleChangeFile)
   
-        // User remplit les champs required de form
+        // User remplit les champs required de form et un nom de dépense
+        userEvent.type(expenseNameInput, "test-valide")
         userEvent.selectOptions(screen.getByRole('combobox'),["Transports"])
         userEvent.type(datePickerInput, "2022-02-22")
         userEvent.type(amountInput,"222")
         userEvent.type(pctInput,"20")
-
         userEvent.upload(fileInput, file)
-  
+        
+        // tests sur ces champs remplis
         expect(file.name).toBe("blabla.jpg")
         expect(fileInput.files[0].name).toBe("blabla.jpg")
+        expect(testHandleChangeFile).toHaveBeenCalledTimes(1)
         expect(screen.getByRole('option', { name : 'Transports'}).selected).toBe(true)
         expect(fileInput.files[0]).toStrictEqual(file)
-        // ^^^ça passe jusque là
+        expect(expenseNameInput.value).toBe("test-valide")
         
         const form= screen.getByTestId("form-new-bill")
         
         // le form a des valeurs valides:
         expect(form).toHaveFormValues({
+          expenseName:'test-valide',
           expenseType:'Transports',
           datepicker:'2022-02-22',
           amount:222,
           pct:20,
+          file:""
         })        
         expect(amountInput).toBeValid()
         expect(expenseTypeInput).toBeValid()
         expect(datePickerInput).toBeValid()
         expect(pctInput).toBeValid()
-        //expect(fileInput).toBeValid()// Received element is not currently valid:
+        //expect(fileInput).toBeValid()// Received element is not currently valid:Received element is not currently valid:        <input aria-errormessage="msgID" aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
+        //normalement il a tout pour être valide
+        //expect(fileInput.checkValidity()).toBe(true) // reçoit false
         expect(file.name).toBe("blabla.jpg")
         expect(file.type).toBe("image/jpg")
-
-
-        //<input aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
-        // il a l'aria invalid, ça veut dire qu'il ne passe pas le check-validity?
+        
+        
   
-        //const submitButton = screen.getByRole("button", { name: /envoyer/i });
-        //expect(submitButton.type).toBe("submit");
+        const submitButton = screen.getByRole("button", { name: /envoyer/i });
+        expect(submitButton.type).toBe("submit");
         //////////// ça marche jusqu'ici
 
-        // submitButton.addEventListener("click", handleSubmit)
-        // userEvent.click(submitButton)
+        submitButton.addEventListener("click", testHandleSubmit)
+        userEvent.click(submitButton)
   
         //form.addEventListener("submit",handleSubmit)
         //userEvent.click(submitButton)
@@ -351,17 +359,17 @@ describe("Given I am connected as an employee 2",()=>{
         //   expect(handleSubmit).toHaveBeenCalledTimes(2)
 
         // })
-        form.addEventListener("submit",handleSubmit)
-        fireEvent.submit(form)
+        //form.addEventListener("submit",handleSubmit)
+        //fireEvent.submit(form)
 
         //submitButton.addEventListener("click", handleSubmit)
         //userEvent.click(submitButton)
         
-        expect(handleSubmit).toHaveBeenCalledTimes(1)
+        expect(testHandleSubmit).toHaveBeenCalledTimes(1)
         //expect(updateBill).toHaveBeenCalled()
 
         /////////////
-         expect(screen.getByText(/Mes/i)).toBeTruthy(); // semble être resté sur la page des newbills
+         expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy(); // semble être resté sur la page des newbills
          ///// :  TestingLibraryElementError: Unable to find an element with the text: /Mes/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
          ///// aussi erreur: 
          //   TypeError: Cannot read property 'value' of null
@@ -372,9 +380,168 @@ describe("Given I am connected as an employee 2",()=>{
       //                            ^
         
       })
+      
+    })
+    describe("when an error occurs on API", ()=>{
+      test("then it should display an error message", async () => {
+          console.error = jest.fn();
+          window.onNavigate(ROUTES_PATH.NewBill)
+          mockStore.bills.mockImplementationOnce(() => {
+            return {
+              update : () =>  {
+                return waitFor (()=> Promise.reject(new Error("Erreur 404")))
+              }
+            }})
+
+            const newBill = new NewBill({
+              document,
+              onNavigate,
+              store: mockStore,
+              localStorage: window.localStorage,
+            });
+            
+            const form= screen.getByTestId("form-new-bill")
+            const handleSubmit = jest.fn((e)=>{
+              newBill.handleSubmit(e)})
+            form.addEventListener("submit",handleSubmit)
+            fireEvent.submit(form)
+            expect(handleSubmit).toHaveBeenCalledTimes(1)
+            await waitFor(()=>new Promise(process.nextTick))
+            expect(console.error).toHaveBeenCalled()
+
+        })
     })
   })
 })
+
+
+
+
+
+//____________vvv
+//____________ marchait avant d'avoir changé les conditioins de handle submit
+//____________
+// // POST : 
+// describe("Given I am connected as an employee 2",()=>{
+//   describe("When I am on the Newbill Page",()=>{
+//     describe("When I filled in correct format all the required fields and I clicked on submit button", ()=>{
+
+//       test("Then I should be sent on the Bills Page",  () => {
+//         const onNavigate = pathname => {
+//           document.body.innerHTML = ROUTES({ pathname });
+//         };
+//         const newBill = new NewBill({
+//           document,
+//           onNavigate,
+//           store: mockStore,
+//           localStorage: window.localStorage,
+//         });
+        
+  
+//         // La capture des Inputs
+//         const expenseTypeInput = screen.getByTestId('expense-type')
+//         const datePickerInput =  screen.getByTestId('datepicker')
+//         const amountInput = screen.getByTestId("amount")
+//         const pctInput = screen.getByTestId("pct")
+//         const fileInput = screen.getByTestId("file");
+        
+//         // le mock de la fonction submit
+//         const handleSubmit = jest.fn((e)=>{
+//           newBill.handleSubmit(e)})
+//         const updateBill = jest.fn(newBill.updateBill)
+//         // NICOLAS: est-ce qu'on doit contrôler updateBill?
+        
+        
+//         // le fichier file valable
+//         const file = new File(["img"], "blabla.jpg", {
+//             type: ["image/jpg"],
+//         });
+  
+//         // User remplit les champs required de form
+//         userEvent.selectOptions(screen.getByRole('combobox'),["Transports"])
+//         userEvent.type(datePickerInput, "2022-02-22")
+//         userEvent.type(amountInput,"222")
+//         userEvent.type(pctInput,"20")
+
+//         userEvent.upload(fileInput, file)
+  
+//         expect(file.name).toBe("blabla.jpg")
+//         expect(fileInput.files[0].name).toBe("blabla.jpg")
+//         expect(screen.getByRole('option', { name : 'Transports'}).selected).toBe(true)
+//         expect(fileInput.files[0]).toStrictEqual(file)
+//         // ^^^ça passe jusque là
+        
+//         const form= screen.getByTestId("form-new-bill")
+        
+//         // le form a des valeurs valides:
+//         expect(form).toHaveFormValues({
+//           expenseType:'Transports',
+//           datepicker:'2022-02-22',
+//           amount:222,
+//           pct:20,
+//         })        
+//         expect(amountInput).toBeValid()
+//         expect(expenseTypeInput).toBeValid()
+//         expect(datePickerInput).toBeValid()
+//         expect(pctInput).toBeValid()
+//         //expect(fileInput).toBeValid()// Received element is not currently valid:
+//         expect(file.name).toBe("blabla.jpg")
+//         expect(file.type).toBe("image/jpg")
+
+
+//         //<input aria-invalid="false" class="form-control blue-border" data-testid="file" name="file" required="" type="file" />
+//         // il a l'aria invalid, ça veut dire qu'il ne passe pas le check-validity?
+  
+//         //const submitButton = screen.getByRole("button", { name: /envoyer/i });
+//         //expect(submitButton.type).toBe("submit");
+//         //////////// ça marche jusqu'ici
+
+//         // submitButton.addEventListener("click", handleSubmit)
+//         // userEvent.click(submitButton)
+  
+//         //form.addEventListener("submit",handleSubmit)
+//         //userEvent.click(submitButton)
+//         //fireEvent.submit(form)
+//         // await waitFor(()=>{
+//         //   submitButton.addEventListener("click", handleSubmit)
+//         //   userEvent.click(submitButton)
+//         //   expect(handleSubmit).toHaveBeenCalledTimes(2)
+
+//         // })
+//         form.addEventListener("submit",handleSubmit)
+//         fireEvent.submit(form)
+
+//         //submitButton.addEventListener("click", handleSubmit)
+//         //userEvent.click(submitButton)
+        
+//         expect(handleSubmit).toHaveBeenCalledTimes(1)
+//         //expect(updateBill).toHaveBeenCalled()
+
+//         /////////////
+//          expect(screen.getByText(/Mes notes de frais/i)).toBeTruthy(); // semble être resté sur la page des newbills
+//          ///// :  TestingLibraryElementError: Unable to find an element with the text: /Mes/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+//          ///// aussi erreur: 
+//          //   TypeError: Cannot read property 'value' of null
+
+//       //107 |       const bill = {
+//       //  108 |         email,
+//       //> 109 |         type: e.target.querySelector(`select//[data-testid="expense-type"]`).value,
+//       //                            ^
+        
+//       })
+//     })
+//   })
+// })
+
+//______________________________________ à faire
+//________________________________________________
+//________________________________________________
+//________________________________________________
+// compléter le post?
+// le test d'erreur 500 => voir le cours 
+
+
+
 
 
 //______________________________________ brouillon

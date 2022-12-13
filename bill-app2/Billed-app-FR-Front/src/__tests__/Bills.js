@@ -78,6 +78,48 @@ describe("Given I am on the Bills page", () => {
     })
   })
 })
+
+//tentative de passage en TU pour validation ligne 15
+// describe("Given I am on the Bills page", () => {
+//   describe("When I click on IconEye Button", () => {
+//     test("Then, It should activate handleclick", () => {
+//       const onNavigate = (pathname) => {
+//         document.body.innerHTML = ROUTES({ pathname })
+//       }
+//       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+//       window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
+
+//       const billsPage = new Bills({
+//         document, 
+//         onNavigate, 
+//         store:mockStore, 
+//         localStorage:localStorageMock
+//       }) // NICOLAS: est-ce que localStorageMock c'est la même chose que window.localStorage
+//       document.body.innerHTML = BillsUI({ data:bills })
+      
+//       const handleClickIcon = jest.fn((e) => billsPage.handleClickIconEye(e)) // mock de la fonction, ou mock d'un fonction avec paramètre
+//       // TOUN: NICOLAS: comment fonctionne le mock d'une fonction à paramètre
+
+//       //const iconEyes = screen.getAllByTestId('icon-eye')// renvoie error reference
+//       const iconEyes = document.querySelectorAll('[data-testid="icon-eye"]')
+//       // iconEyes[0].addEventListener('click', () => handleClickIcon(iconEyes[0])) // ça marche car il y a un paramètre.
+//       iconEyes[0].addEventListener("click", (e) => 
+//           handleClickIcon(e)
+//         )
+//        //TOUN= NICOLAS= et ensuite comment on l'utilise? 
+//       // pourquoi ligne 15 pas validée
+      
+//       userEvent.click(iconEyes[0])
+      
+//       expect(handleClickIcon).toHaveBeenCalled()
+//     })
+//   })
+// })
+
+
+
+
+
 describe("Given I am on the Bills page", () => {
   describe("When I click on IconEye Button", () => {
     test("Then, It should open the modal", () => {
