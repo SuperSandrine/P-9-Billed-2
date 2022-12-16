@@ -37,7 +37,7 @@ export default class NewBill {
     // const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
     const fileExtension = fileType.split(/\//g)[1];
     //const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
-    //console.log("fileext", fileExtension);
+    console.log("fileext", fileExtension);
     //console.log("e", e);
 
     //console.log("file", e.target);
@@ -62,7 +62,7 @@ export default class NewBill {
     
     if (isGoodExtension==true){
       inputfile.classList.remove("red-border");       
-      inputfile.removeAttribute("aria-invalid", true)
+      inputfile.removeAttribute("aria-invalid")
       inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
@@ -94,7 +94,7 @@ export default class NewBill {
       //console.log("inputfile value",inputfile.value);
       inputfile.classList.remove("blue-border")
       inputfile.classList.add("red-border")
-      inputfile.removeAttribute("aria-invalid", false)
+      inputfile.removeAttribute("aria-invalid")
       inputfile.setAttribute("aria-invalid",true)
       inputFileErrorMsg.style.visibility = "visible"
       inputfile.value=""
@@ -102,9 +102,14 @@ export default class NewBill {
       console.log("check dans mauvais scénar", inputfile.checkValidity())
            
   }}
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault()
-    const form = document.querySelector(`input[data-testid="form-new-bill"]`)
+    //const form = document.querySelector(`input[data-testid="form-new-bill"]`)
+    const form = e.target
+    console.log("et e c'est koi ?", e) // 
+    console.log("et ça ?", form) // renvoit form
+    console.log("ce qui ne marche pas", e.target.querySelector(`select[data-testid="expense-type"]`).value) // renvoit Transports
+    console.log("le form est-il valide",form.checkValidity())
     // nicolas, est-ce qu'il faut que je vire la conditionnelle de handleSubmit?
     // et que je fasse ce travail dans la isGoodExtension?
     // const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
@@ -132,11 +137,12 @@ export default class NewBill {
         fileName: this.fileName,
         status: 'pending'
       }
-      console.log("bill avec new data", bill)
-      console.log("a inavalid?",inputfile.classList.contains("aria-invalid",true))
-      // if(inputfile.classList.contains("aria-invalid",true)){
-      // return error
-      // }else{
+      //console.log("bill avec new data", bill)
+      //console.log("aria invalid?",inputfile.getAttribute("aria-invalid"))
+//        if(!inputfile.checkValidity()){
+
+      //  return 
+      //  }else{
       this.updateBill(bill)
       this.onNavigate(ROUTES_PATH['Bills'])
     //}
