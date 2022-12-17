@@ -19,9 +19,11 @@ const row = (bill) => {
     `)
   }
 
-// affiche le tableau data en fonction de row( qui affiche une ligne du display note de frais)
-// ajout de la fonctin de tri
-
+  //------------//------------
+  //------------BUG 1---------
+  //------------//------------
+  // fonction qui affiche le tableau data (le tri, l'affiche par ligne row, et enlève les virgules)
+  // ajout de la fonctin de tri
 const rows = (data) => {
   //console.log("data dans rows", data);
   const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)

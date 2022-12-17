@@ -89,7 +89,11 @@ export default class {
   }
 
   handleEditTicket(e, bill, bills) {
-    //DEBUG: y a un problème de double-click lorsque qu'on sort d'un statut
+    //------------//------------
+    //------------BUG 2---------
+    //------------//------------
+
+    //DEBUG: y a un problème de double-click lorsque qu'on sort d'un titre de statut
     // pour clicker sur le ticket d'un autre statut déjà déplié
     //console.log("===début===");
     //console.log("type de counter", typeof(this.counter));
@@ -104,7 +108,7 @@ export default class {
       }) // met un fond bleu sur toute les cartes
       $(`#open-bill${bill.id}`).css({ background: '#2A2B35' }) //fond noir
       $('.dashboard-right-container div').html(DashboardFormUI(bill)) //mise en page dans le dash droit
-      $('.vertical-navbar').css({ height: '150vh' }) // hauteur à gauche
+      $('.vertical-navbar').css({ height: '150vh' }) // hauteur de la barre à gauche
       this.counter ++
       //console.log("comptage après action 1", this.counter);
     } else {
@@ -161,7 +165,7 @@ export default class {
     // DEBUG: le modulo n'étant pas fiable, je vais utiliser hasAtribute
     // pour vérifier que l'arrow n'a pas déjà déplié les tickets et agir 
     // en toggle en fonction de cette réponse
-    // essaie de céer un toggle??
+    // le prog essaie de créer un toggle??
     // ça enlève une partie du bug, mais pas le bug d'affichage des tickes 
     // >>> voir handleEditTicket
     // console.log("rotation au début?",e.currentTarget.hasAttribute("style"));
@@ -182,11 +186,13 @@ export default class {
       $(`#open-bill${bill.id}`).click((e) => {
         this.handleEditTicket(e, bill, bills)
       })
-    }) // ajoute un event listener à chaque fois que je déroule une liste, 
-    // pour éviter de doubler les écoutes, j'éteinds l'écoute avant de continuer
-    // est-ce que du coup à chaque fois que j'appuie sur la flèche ça m'ajoute un event listener?
+    }) 
+    //------------//------------
+    //------------DEBUG 4---------
+    //------------//------------
+    // le problème: ajoute un event listener à chaque fois que je déroule une liste, 
     // du coup 3 flèche, 3 eventlistener sur le premier lot, 2 sur le 2eme et 1 sur le dernier
-
+    // solution: pour éviter de doubler les écoutes, j'éteinds l'écoute avant de continuer
 
     return bills
 

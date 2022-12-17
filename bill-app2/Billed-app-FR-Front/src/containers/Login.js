@@ -34,10 +34,12 @@ export default class Login {
         PREVIOUS_LOCATION = this.PREVIOUS_LOCATION
         this.document.body.style.backgroundColor="#fff"
       })
-
   }
-
-  //ligne 45 et 46 passe de employee à admin
+    
+  //------------//------------
+  //------------BUG 2---------
+  //------------//------------
+  //ligne 45 et 46 passe de employee à admin 
   handleSubmitAdmin = e => {
     e.preventDefault()
     const user = {

@@ -20,54 +20,33 @@ export default class NewBill {
     const inputfile = this.document.querySelector(`input[data-testid="file"]`) //input
     const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0] //le fichier
-//    console.log("file", inputfile);//input
-//    console.log("file ssans files[0]", this.document.querySelector(`input[data-testid="file"]`));//fichier dans l'input
 
-    const filePath = e.target.value.split(/\\/g)
-    //console.log("filepath", filePath);
-    // DEBUG: pour contrôler l'extension: avec la méthode de la const filePatth
-    // on récupère le dernier item du tableau (const fileExtension)
-    // et on vérifie que c'est bien les formats acceptés (const controlPictureExtension(fileExtension))
-    // affiche une ligne rouge si le format est mauvais
+    const filePath = e.target.value.split(/\\/g) // sépare le chemin en item dans un tableau
+
+    //------------//------------
+    //------------BUG-----------
+    //------------//------------
+    // DEBUG: pour contrôler l'extension du fichier: on récupérer le type de fichier avec .type, on récupère la partie après le slash pour comparaison et on valide ou non.
     // on peut aussi utilisé l'attribut 'accept' dans le html: NewBillUI.js ligne58
     // accept="image/png, image/jpg, image/jpeg"
-    // Pour contrôle du fichier on peut aussi utilisé le type:
-     const fileType = document.querySelector(`input[data-testid="file"]`).files[0].type;
-    // console.log("type", fileType);
-    // const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
+    const fileType = document.querySelector(`input[data-testid="file"]`).files[0].type;
     const fileExtension = fileType.split(/\//g)[1];
-    //const fileExtension = e.target.value.split(/\./g)[e.target.value.split(/\./g).length-1]
-    console.log("fileext", fileExtension);
-    //console.log("e", e);
-
-    //console.log("file", e.target);
-    //console.log("file value", e.target.value); // undefined dans test
-
-
 
     const controlPictureExtension = (x)=>{
       if (x == 'jpg'|| x =='png' || x=='jpeg'){return true    
       } else{return false}
     }
     const isGoodExtension = controlPictureExtension(fileExtension)
-     console.log("alors ce format est", isGoodExtension);
+
     const fileName = filePath[filePath.length-1]
-    //console.log("fileName", fileName);
-    //const formData = new FormData()
-    //console.log("formData", formData);
-    //const email = JSON.parse(localStorage.getItem("user")).email
-    //formData.append('file', file)
-    //formData.append('email', email)
-    //console.log("formData2", formData);
-    
+
     if (isGoodExtension==true){
       inputfile.classList.remove("red-border");       
       inputfile.removeAttribute("aria-invalid")
       inputfile.setAttribute("aria-invalid",false)
       inputfile.classList.add("blue-border")
       inputFileErrorMsg.style.visibility = "hidden"
-
-      console.log("check dans le bon scénar", inputfile.checkValidity())
+      //console.log("check dans le bon scénar", inputfile.checkValidity())
 
       const formData = new FormData()
       const email = JSON.parse(localStorage.getItem("user")).email
@@ -82,16 +61,12 @@ export default class NewBill {
           }
         })
         .then(({fileUrl, key}) => {
-        //  console.log("fileUrl", fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
         })
         .catch(error => console.error(error))
     }else if(isGoodExtension == false){
-      console.log("mauvais type de fichier, qui es-tu file?",inputfile);
-      
-      //console.log("inputfile value",inputfile.value);
       inputfile.classList.remove("blue-border")
       inputfile.classList.add("red-border")
       inputfile.removeAttribute("aria-invalid")
@@ -99,29 +74,23 @@ export default class NewBill {
       inputFileErrorMsg.style.visibility = "visible"
       inputfile.value=""
       //inputfile.setCustomValidity("Le fichier doit être en jpg, jpeg, png");
-      console.log("check dans mauvais scénar", inputfile.checkValidity())
+      //console.log("check dans mauvais scénar", inputfile.checkValidity())
            
   }}
   handleSubmit = (e) => {
     e.preventDefault()
-    //const form = document.querySelector(`input[data-testid="form-new-bill"]`)
+    //console.log("et e c'est koi ?", e) // c'est submitEvent{datas}, l'évenement soumis et ses infos
     const form = e.target
-    console.log("et e c'est koi ?", e) // 
-    console.log("et ça ?", form) // renvoit form
-    console.log("ce qui ne marche pas", e.target.querySelector(`select[data-testid="expense-type"]`).value) // renvoit Transports
-    console.log("le form est-il valide",form.checkValidity())
-    // nicolas, est-ce qu'il faut que je vire la conditionnelle de handleSubmit?
-    // et que je fasse ce travail dans la isGoodExtension?
-    // const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
-    const inputfile = document.querySelector(`input[data-testid="file"]`)
-    // console.log("linput",inputfile.classList.contains("red-border"))
-    // //if(inputfile.hasAttribute("red-border")){
-    // if(inputfile.classList.contains("red-border")){
-    // //if(inputfile.hasAttribute("aria-invalid",true)){
-    //   // inputFileErrorMsg.style.fontSize = "large"
-    //   // inputFileErrorMsg.style.fontWeight = "900"
-    //   return      
-    // }else if(inputfile.classList.contains("blue-border")){
+    //console.log("le form est-il valide dans handlesubmit",form.checkValidity())
+    
+    //const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
+    //const inputfile = document.querySelector(`input[data-testid="file"]`)
+    //if(inputfile.classList.contains("red-border") || inputfile.files[0]==undefined){
+    //inputFileErrorMsg.style.visibility = "visible"
+    //inputFileErrorMsg.style.fontSize = "large"
+    //inputFileErrorMsg.style.fontWeight = "900"
+    //return      
+    //}else if(inputfile.classList.contains("blue-border")){
       //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
       const email = JSON.parse(localStorage.getItem("user")).email
       const bill = {
@@ -139,8 +108,7 @@ export default class NewBill {
       }
       //console.log("bill avec new data", bill)
       //console.log("aria invalid?",inputfile.getAttribute("aria-invalid"))
-//        if(!inputfile.checkValidity()){
-
+      //        if(!inputfile.checkValidity()){
       //  return 
       //  }else{
       this.updateBill(bill)
