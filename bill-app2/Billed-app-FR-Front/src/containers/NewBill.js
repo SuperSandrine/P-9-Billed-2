@@ -79,41 +79,25 @@ export default class NewBill {
   }}
   handleSubmit = (e) => {
     e.preventDefault()
-    //console.log("et e c'est koi ?", e) // c'est submitEvent{datas}, l'évenement soumis et ses infos
     const form = e.target
-    //console.log("le form est-il valide dans handlesubmit",form.checkValidity())
     
-    //const inputFileErrorMsg = this.document.querySelector(`.error-msg`)
-    //const inputfile = document.querySelector(`input[data-testid="file"]`)
-    //if(inputfile.classList.contains("red-border") || inputfile.files[0]==undefined){
-    //inputFileErrorMsg.style.visibility = "visible"
-    //inputFileErrorMsg.style.fontSize = "large"
-    //inputFileErrorMsg.style.fontWeight = "900"
-    //return      
-    //}else if(inputfile.classList.contains("blue-border")){
-      //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
-      const email = JSON.parse(localStorage.getItem("user")).email
-      const bill = {
-        email,
-        type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
-        name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
-        amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
-        date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
-        vat: e.target.querySelector(`input[data-testid="vat"]`).value,
-        pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
-        commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
-        fileUrl: this.fileUrl,
-        fileName: this.fileName,
-        status: 'pending'
-      }
-      //console.log("bill avec new data", bill)
-      //console.log("aria invalid?",inputfile.getAttribute("aria-invalid"))
-      //        if(!inputfile.checkValidity()){
-      //  return 
-      //  }else{
-      this.updateBill(bill)
-      this.onNavigate(ROUTES_PATH['Bills'])
-    //}
+    //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+    const email = JSON.parse(localStorage.getItem("user")).email
+    const bill = {
+      email,
+      type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
+      name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
+      amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
+      date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
+      vat: e.target.querySelector(`input[data-testid="vat"]`).value,
+      pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
+      commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
+      fileUrl: this.fileUrl,
+      fileName: this.fileName,
+      status: 'pending'
+    }
+    this.updateBill(bill)
+    this.onNavigate(ROUTES_PATH['Bills'])
   }
 
   // not need to cover this function by tests
