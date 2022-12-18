@@ -26,7 +26,7 @@ const row = (bill) => {
   // ajout de la fonctin de tri
 const rows = (data) => {
   //console.log("data dans rows", data);
-  const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
+  const antiChrono = (a, b) => ((a.date > b.date) ? 1 : -1)
   return (data && data.length) ? data
     .sort(antiChrono)
     .map(bill => row(bill))

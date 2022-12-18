@@ -24,7 +24,7 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g) // sépare le chemin en item dans un tableau
 
     //------------//------------
-    //------------BUG-----------
+    //------------BUG 3---------
     //------------//------------
     // DEBUG: pour contrôler l'extension du fichier: on récupérer le type de fichier avec .type, on récupère la partie après le slash pour comparaison et on valide ou non.
     // on peut aussi utilisé l'attribut 'accept' dans le html: NewBillUI.js ligne58
